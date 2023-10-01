@@ -1,0 +1,106 @@
+Tabella : employees (tabella di sinistra)                     Tabella departments (tabella di destra)
+employee_id | employee_name | department_id                   department_id | department_name | salary
+------------------------------------------                    -----------------------------------------
+1          | John          | 101                              101          | HR               | 1200
+2          | Alice         | 102                              102          | IT               | 1300
+3          | Bob           | 101                              103          | Sales            | 1500
+4          | Carol         | 103
+5          | Dave          | 102
+6          | Doyle         | NULL
+
+LEFT JOIN: 
+SELECT e.employee_name, d.salary           (prendo solo il e.name e il d.salary dove department_id corrispondono)
+FROM employees e
+LEFT JOIN departments d ON e.department_id = d.department_id;
+- Il risultato sarà una tabella con i nomi degli impiegati e lo stipendio .
+
+RIGHT JOIN
+SELECT e.employee_name, d.department_name 
+FROM employees e
+RIGHT departments d ON e.department_id = d.department_id
+WHERE D.salary >1200
+- Il risultato sarà una bella dove ci saranno io nomi dei dipendenti e il nome del dipartimento dove lavorano, PERO' , solo quelli con salario >1200 quindi non ci saranno John, Bob e la voce HR
+
+INNER JOIN
+SELECT e.employee_name, d.department_name, d.salary
+FROM employees e
+INNER JOIN departments d ON e.department_id = d.department_id;
+- Il risultato sarà una tabella con nomi, nome del dipartimento e salario corrispettivi ai department.id in comune
+
+LEFT & RIGHT JOIN (CON ID NULL)
+
+Mettiamo caso che alla tabella employees aggiungo un impiegato(6, Doyle)so ancora in che dipartimento metterlo e nel frattempo lo metto in stallo (null)
+Dopo qualche giorno mi danno il compito di aggiungere il settore a questo nuovo impiegato e fa parte dell HR
+SELECT e.employee_id, e.employee_name
+FROM employees e
+LEFT JOIN departments d ON e.department_id = d.department_id
+WHERE d.department_id IS NULL;
+dopo che avrò trovato l'employee_id (che ricordiamo è unica e primaria) dovrò fare l' update
+UPDATE employees
+SET department_id = 101
+where employee_id=6;
+SELECT * FROM employees;
+employee_id | employee_name | department_id
+------------------------------------------
+1          | John          | 101
+2          | Alice         | 102
+3          | Bob           | 101
+4          | Carol         | 103
+5          | Dave          | 102
+6          | Doyle         | 101
+ecco fatto ora avrò il dipendente aggiornato con il department corretto.
+
+
+
+
+FULL OUTER JOIN
+Tabella : employees (tabella di sinistra)
+
+employee_id | employee_name | department_id
+------------------------------------------ 
+1          | John          | 101
+2          | Alice         | 102
+3          | Bob           | 101
+4          | Carol         | 103
+5          | Dave          | 102
+6          | Doyle         | NULL
+7          | Andrea        | NULL
+
+Tabella departments (tabella di destra)
+department_id | department_name | salary
+-----------------------------------------
+101          | HR               | 1200
+102          | IT               | 1300
+103          | Sales            | 1500
+104          | Contabile        | 1400
+
+
+con una full outer Join posso prendere tutto quello che ho in entrambe le tabelle 
+
+SELECT e.employee_name, d.department_name, d.salary
+FROM employees e
+FULL OUTER JOIN departments d ON e.department_id = d.department_id;
+- Il risultato di questa full outer join è cosi.
+employee_name | department_name | salary
+----------------------------------------
+John          | HR              | 1200
+Alice         | IT              | 1300
+Bob           | HR              | 1200
+Carol         | Sales           | 1500
+Dave          | IT              | 1300
+Doyle         | NULL            | NULL
+Andrea        | NULL            | NULL
+NULL          | Contabile       | 1400
+
+
+Mentre l 'altro tipo prendo tutto, ma lascio fuori soltanto le cose in comune, quindi avrò una tabella con solo dove e_id e d_id = NULL
+SELECT e.employee_name, d.department_name, d.salary
+FROM employees e
+FULL OUTER JOIN departments d ON e.department_id = d.department_id
+WHERE e.employee_id IS NULL OR d.department_id IS NULL;
+
+employee_name | department_name | salary
+----------------------------------------
+Doyle         | NULL            | NULL
+Andrea        | NULL            | NULL
+NULL          | Contabile       | 1400
